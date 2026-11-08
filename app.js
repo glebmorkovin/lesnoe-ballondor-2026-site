@@ -59,7 +59,7 @@ function remove(position){if(state.myVote||!state.votingOpen||state.loading||sta
 function matches(name,query){return name.toLocaleLowerCase('ru').includes(query.toLocaleLowerCase('ru').trim());}
 function renderNominees(){
  const q=$('nomineeSearch').value;const shown=state.nominees.filter(n=>matches(n.name,q));
- $('nomineesShown').textContent=shown.length+' ИГРОКОВ';$('nomineeCount').textContent=state.nominees.length;
+ $('nomineesShown').textContent=shown.length+' ИГРОКОВ';$('nomineeCount').textContent=state.nominees.length;$('heroNomineeCount').textContent=state.nominees.length;$('rankingNomineeCount').textContent=state.nominees.length+' номинантов · сезон 2026';
  $('nomineesGrid').innerHTML=shown.map(n=>{
  const chosen=state.selected.includes(n.id);return `<button class="nominee-card ${chosen?'chosen':''}" data-pick="${n.id}" type="button" aria-label="${chosen?'Уже выбран: ':'Добавить: '}${esc(n.name)}"><span class="nominee-avatar">${esc(initials(n.name))}</span><span><b class="nominee-name">${esc(n.name)}</b><small class="nominee-meta">НОМИНАНТ • 2026</small></span><span class="nominee-action">${chosen?'✓':'+'}</span></button>`;
  }).join('')||'<div class="empty-filter">Никого не нашли — попробуй другое имя.</div>';
@@ -195,6 +195,27 @@ function initAwards(){
  $('awardSelect').addEventListener('change',e=>switchAward(e.target.value));$('resultsAwardSelect').addEventListener('change',e=>switchResults(e.target.value));
  try{$('voterName').value=localStorage.getItem('lesnoe_voter_name')||'';}catch{}
 }
+async function refreshNominees(){
+ try{const data=await request('nominees');state.nominees=data.nominees;renderNominees();renderVoteCandidates();}catch{}
+}
+let nomineeSending=false;
+function nomineeFeedback(message,error=false){$('nomineeFeedback').textContent=message;$('nomineeFeedback').className='feedback '+(error?'error':'success');}
+function initNominees(){
+ const open=()=>{nomineeFeedback('');$('nomineeDialog').showModal();$('nomineeName').focus();};
+ $('nomineeOpen').addEventListener('click',open);$('voteNomineeOpen').addEventListener('click',open);
+ $('nomineeClose').addEventListener('click',()=>$('nomineeDialog').close());
+ $('nomineeDialog').addEventListener('click',e=>{if(e.target===$('nomineeDialog'))$('nomineeDialog').close();});
+ $('nomineeForm').addEventListener('submit',async e=>{
+  e.preventDefault();if(nomineeSending)return;const name=$('nomineeName').value.trim().replace(/\s+/gu,' ');
+  if(name.length<2||name.length>60){nomineeFeedback('Укажи имя от 2 до 60 символов.',true);return;}
+  nomineeSending=true;$('nomineeSubmit').disabled=true;nomineeFeedback('Добавляем кандидата…');
+  try{const data=await request('nominees',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});
+   if(!findNominee(data.nominee.id))state.nominees.push(data.nominee);
+   $('nomineeSearch').value='';$('voteSearch').value='';renderNominees();renderVoteCandidates();await updateResults();
+   $('nomineeForm').reset();$('nomineeDialog').close();toast(data.nominee.name+' добавлен в общий список. Теперь его можно выбрать.');
+  }catch(err){nomineeFeedback(err.message,true);}finally{nomineeSending=false;$('nomineeSubmit').disabled=false;}
+ });
+}
 const momentsState={items:[],index:0,sending:false};
 function momentFeedback(message,error=false){$('momentFeedback').textContent=message;$('momentFeedback').className='feedback '+(error?'error':'success');}
 function renderMoment(){
@@ -240,6 +261,6 @@ function bind(){
  $('adminAuth').addEventListener('click',adminAuth);$('adminSave').addEventListener('click',adminSave);$('adminUpload').addEventListener('click',adminUpload);$('adminGenerate').addEventListener('click',adminGenerate);$('adminExport').addEventListener('click',adminExport);
  $('adminCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('generatedCodes').value);adminMessage('Коды скопированы.','success');}catch{adminMessage('Не получилось скопировать. Выдели текст вручную.','error');}});
 }
-async function start(){initAwards();initMoments();bind();renderAwardDetails();renderPoints();renderResults();await Promise.all([load(),updateResults(),loadMoments()]);if(state.myVote)state.selected=[...state.myVote];else draftLoad();refreshAll();setInterval(()=>{if(!document.hidden){updateResults();loadMoments(true);}},30000);}
+async function start(){initAwards();initMoments();initNominees();bind();renderAwardDetails();renderPoints();renderResults();await Promise.all([load(),updateResults(),loadMoments()]);if(state.myVote)state.selected=[...state.myVote];else draftLoad();refreshAll();setInterval(()=>{if(!document.hidden){updateResults();loadMoments(true);refreshNominees();}},30000);}
 start();
 })();
