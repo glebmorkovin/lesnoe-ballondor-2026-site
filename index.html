@@ -4,14 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#090e0c">
-  <meta name="description" content="Золотой мяч Лесного 2026. Выбери десять лучших игроков сезона на лесном поле в Белоострове.">
+  <meta name="description" content="Золотой мяч Лесного 2026. Лучший игрок Лесного и семь отдельных наград сезона. Выбери своих лидеров.">
   <title>Золотой мяч Лесного — 2026 | Lesnoe d'Or</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="styles.css?v=awards-2026">
+  <script src="awards.js?v=awards-2026" defer></script>
+  <script src="app.js?v=awards-2026" defer></script>
 </head>
 <body>
   <div class="announcement"><span class="ann-diamond">✦</span> ОФИЦИАЛЬНАЯ ПРЕМИЯ НАШЕГО ПОЛЯ — ЛЕСНОЙ ДВОР <span class="ann-divider"></span> СЕЗОН 2026 <span class="ann-diamond">✦</span></div>
@@ -21,11 +22,11 @@
         <img src="assets/mark.svg" alt="" width="46" height="46">
         <span class="brand-copy"><b>LESNOE <i>D’OR</i></b><small>БЕЛООСТРОВ · 2026</small></span>
       </a>
-      <nav class="nav" aria-label="Главное меню"><a href="#nominees">Номинанты</a><a href="#vote">Голосование</a><a href="#ranking">Рейтинг</a><a href="#rules">Правила</a></nav>
+      <nav class="nav" aria-label="Главное меню"><a href="#awards">Награды</a><a href="#nominees">Номинанты</a><a href="#vote">Голосование</a><a href="#ranking">Рейтинг</a><a href="#rules">Правила</a></nav>
       <a class="nav-button" href="#vote">ГОЛОСОВАТЬ <span aria-hidden="true">↗</span></a>
       <button class="mobile-menu" id="menuBtn" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
-    <div class="mobile-links" id="mobileLinks"><a href="#nominees">Номинанты</a><a href="#vote">Голосовать</a><a href="#ranking">Рейтинг</a><a href="#rules">Правила</a></div>
+    <div class="mobile-links" id="mobileLinks"><a href="#awards">Награды</a><a href="#nominees">Номинанты</a><a href="#vote">Голосовать</a><a href="#ranking">Рейтинг</a><a href="#rules">Правила</a></div>
   </header>
 
   <main>
@@ -38,9 +39,9 @@
           <div class="eyebrow"><span class="gold-line"></span> БЕЛООСТРОВ, ЛЕСНОЕ ПОЛЕ <span class="eyebrow-line">/</span> СЕЗОН 2026</div>
           <div class="hero-edition">THE 2026 EDITION <span>✧</span> THE 2026 EDITION</div>
           <h1 id="heroTitle">ЗОЛОТОЙ<br><em>МЯЧ</em> ЛЕСНОГО<span class="hero-star">✦</span></h1>
-          <p class="hero-sub">Здесь не нужен «Сантьяго Бернабеу», чтобы стать легендой. Только наше поле, наш сезон и ваш выбор.</p>
+          <p class="hero-sub">Здесь не нужен «Сантьяго Бернабеу», чтобы стать легендой. Только наше поле, наш сезон и ваш выбор. Золотой мяч — лучшему игроку Лесного в целом. Ещё семь наград — героям отдельных номинаций.</p>
           <div class="hero-actions"><a class="button button-gold" href="#vote">ВЫБРАТЬ ТОП-10 <span>↗</span></a><a class="button button-ghost" href="#ranking">РЕЗУЛЬТАТЫ <span>↓</span></a></div>
-          <div class="hero-tiny">36 НОМИНАНТОВ <span>•</span> 10 МЕСТ В БЮЛЛЕТЕНЕ <span>•</span> 1 ОБЛАДАТЕЛЬ</div>
+          <div class="hero-tiny">36 НОМИНАНТОВ <span>•</span> 8 НАГРАД <span>•</span> ОДИН ОБЩИЙ СЕЗОН</div>
         </div>
         <div class="hero-art" aria-hidden="true"><div class="hero-circle"></div><div class="hero-halo"></div><img src="assets/trophy.svg" alt=""><span class="trophy-caption">ЗА СЕЗОН, КОТОРЫЙ<br>НЕ ЗАБЫТЬ</span></div>
       </div>
@@ -49,10 +50,14 @@
 
     <div class="ticker" aria-hidden="true"><div class="ticker-inner">LESNOE D’OR <span>✦</span> THE FIELD. THE PEOPLE. THE LEGENDS. <span>✦</span> ЗОЛОТОЙ МЯЧ 2026 <span>✦</span> LESNOE D’OR <span>✦</span> THE FIELD. THE PEOPLE. THE LEGENDS. <span>✦</span> ЗОЛОТОЙ МЯЧ 2026 <span>✦</span></div></div>
 
+    <section class="awards-section" id="awards"><div class="container">
+      <div class="section-heading"><div class="eyebrow"><span class="gold-line"></span> ГЕРОИ НАШЕГО ПОЛЯ</div><h2>ВОСЕМЬ <em>НАГРАД</em></h2><p>В каждой награде — отдельный бюллетень и свой рейтинг. За лучшего игрока Лесного в целом выбери топ-10. В остальных семи премиях — топ-3. Можно голосовать во всех категориях, в любом порядке.</p></div>
+      <div id="awardsGrid" class="awards-grid"></div>
+    </div></section>
     <section class="intro-section" id="nominees">
       <div class="container">
         <div class="section-heading split-head"><div><div class="eyebrow subdued"><span class="gold-line"></span> ГЛАВНЫЕ ГЕРОИ СЕЗОНА</div><h2>ВСЕ <em>НОМИНАНТЫ</em></h2></div><p>Не звёзды с обложек. Люди, которые выходили на наше поле. Каждый здесь заслужил место в истории.</p></div>
-        <div class="stat-strip"><div><span class="stat-icon">✧</span><b id="nomineeCount">36</b><small>номинантов</small></div><div><span class="stat-icon">◈</span><b>10</b><small>выборов в бюллетене</small></div><div><span class="stat-icon">✦</span><b>2026</b><small>сезон Лесного</small></div></div>
+        <div class="stat-strip"><div><span class="stat-icon">✧</span><b id="nomineeCount">36</b><small>номинантов</small></div><div><span class="stat-icon">◈</span><b>8</b><small>наград сезона</small></div><div><span class="stat-icon">✦</span><b>2026</b><small>сезон Лесного</small></div></div>
         <div class="nominee-toolbar"><div class="input-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.5"/><path d="m16 16 5 5"/></svg><input id="nomineeSearch" type="search" autocomplete="off" placeholder="Найти своего кандидата..." aria-label="Поиск номинанта"></div><span id="nomineesShown">36 ИГРОКОВ</span></div>
         <div class="nominee-grid" id="nomineesGrid"></div>
       </div>
@@ -60,31 +65,31 @@
 
     <section class="vote-section" id="vote">
       <div class="container">
-        <div class="section-heading vote-heading"><div class="eyebrow"><span class="gold-line"></span> ВАШ ГОЛОС ОПРЕДЕЛЯЕТ ИСТОРИЮ</div><h2>СОСТАВЬ СВОЙ <em>ТОП-10</em></h2><p>Сначала выбери 10 игроков — пока в любом порядке. Затем перейди к бюллетеню и укажи, какое место заслуживает каждый.</p></div>
+        <div class="section-heading vote-heading"><div class="eyebrow"><span class="gold-line"></span> ВАШ ГОЛОС ОПРЕДЕЛЯЕТ ИСТОРИЮ</div><label class="award-select-label" for="awardSelect">ВЫБЕРИ НАГРАДУ</label><select id="awardSelect" class="award-select"></select><h2 id="voteTitle">СОСТАВЬ СВОЙ <em>ТОП-10</em></h2><div class="active-award-info"><h3 id="activeAwardName"></h3><p id="activeAwardDescription"></p><p id="activeAwardGuidance"></p><p id="awardScoring" class="award-scoring"></p></div></div>
         <div class="vote-layout" id="voteLayout">
           <div class="selection-panel" id="selectionPanel">
             <div class="panel-top"><div><span class="panel-kicker">ШАГ 01 / 02</span><h3>ВЫБЕРИ ИГРОКОВ</h3></div><span class="mini-tag" id="selectionCount">ВЫБРАНО 0 / 10</span></div>
             <label class="panel-search"><span>⌕</span><input type="search" id="voteSearch" placeholder="Поиск по имени..." autocomplete="off"></label>
-            <p class="ballot-instruction">Выбери свой топ-10. На следующем шаге расставишь игроков по местам.</p><div class="vote-candidates" id="voteCandidates" aria-label="Выбор номинантов"></div><div id="selectedPlayers" class="selected-players" aria-label="Выбранные игроки"></div><p id="selectionHint" class="feedback" role="status"></p><button id="continueBallot" class="button button-gold submit-button" type="button" disabled>К БЮЛЛЕТЕНЮ <span>↗</span></button>
+            <p class="ballot-instruction" id="selectionInstruction"></p><div class="vote-candidates" id="voteCandidates" aria-label="Выбор номинантов"></div><div id="selectedPlayers" class="selected-players" aria-label="Выбранные игроки"></div><p id="selectionHint" class="feedback" role="status"></p><button id="continueBallot" class="button button-gold submit-button" type="button" disabled>К БЮЛЛЕТЕНЮ <span>↗</span></button>
           </div>
           <div class="ballot-panel hidden" id="ballotPanel">
-            <div class="panel-top ballot-top"><div><span class="panel-kicker">ШАГ 02 / 02</span><h3>ТВОЙ БЮЛЛЕТЕНЬ</h3></div><span class="ballot-fraction"><b id="selectedCount">0</b> / 10</span></div>
+            <div class="panel-top ballot-top"><div><span class="panel-kicker">ШАГ 02 / 02</span><h3>ТВОЙ БЮЛЛЕТЕНЬ</h3></div><span class="ballot-fraction"><b id="selectedCount">0</b> / <span id="ballotLimit">10</span></span></div>
             <div class="ballot-progress"><span id="ballotProgress"></span></div>
-            <p class="ballot-instruction">Введи место от 1 до 10 рядом с игроком и нажми Enter или выйди из поля. Игрок переместится на это место, остальные сдвинутся. Первое место — 15 очков.</p>
+            <p class="ballot-instruction" id="rankingInstruction"></p>
             <button id="backToSelection" class="back-to-selection" type="button">← ИЗМЕНИТЬ СОСТАВ ТОП-10</button><div id="ballotList" class="ballot-list" aria-live="polite"></div>
-            <div class="voter-form" id="voterForm"><label for="voterName">КАК ТЕБЯ ЗОВУТ? <span>— имя увидит только организатор</span></label><input id="voterName" type="text" maxlength="48" autocomplete="name" placeholder="Например, Сергей" required><div id="inviteCodeWrap" class="hidden"><label for="inviteCode">КОД ГОЛОСОВАНИЯ</label><input id="inviteCode" type="text" placeholder="LES-XXXX-XXXX" autocomplete="off" maxlength="32"></div><button id="submitVote" type="button" class="button button-gold submit-button" disabled>ОТПРАВИТЬ ГОЛОС <span>↗</span></button><p class="voter-footnote">Голос окончательный. После отправки поменять топ-10 нельзя.</p><div id="voteFeedback" class="feedback" role="status" aria-live="polite"></div></div>
+            <div class="voter-form" id="voterForm"><label for="voterName">КАК ТЕБЯ ЗОВУТ? <span>— имя увидит только организатор</span></label><input id="voterName" type="text" maxlength="48" autocomplete="name" placeholder="Например, Сергей" required><div id="inviteCodeWrap" class="hidden"><label for="inviteCode">КОД ГОЛОСОВАНИЯ</label><input id="inviteCode" type="text" placeholder="LES-XXXX-XXXX" autocomplete="off" maxlength="32"></div><button id="submitVote" type="button" class="button button-gold submit-button" disabled>ОТПРАВИТЬ ГОЛОС <span>↗</span></button><p class="voter-footnote">Голос в этой награде окончательный. В других номинациях можно проголосовать отдельно.</p><div id="voteFeedback" class="feedback" role="status" aria-live="polite"></div></div>
           </div>
         </div>
       </div>
     </section>
 
     <section class="ranking-section" id="ranking"><div class="container">
-      <div class="section-heading ranking-head"><div><div class="eyebrow subdued"><span class="gold-line"></span> РЕЗУЛЬТАТЫ ОБЩЕГО ГОЛОСОВАНИЯ</div><h2>ГОНКА ЗА <em>ЗОЛОТОМ</em></h2><p>Общий рейтинг обновляется автоматически. Только реальные отправленные бюллетени.</p></div><div class="rank-stats"><span class="live-dot"></span><span>ВСЕГО ГОЛОСОВ</span><strong id="votesCount">0</strong></div></div>
+      <div class="section-heading ranking-head"><div><div class="eyebrow subdued"><span class="gold-line"></span> РЕЗУЛЬТАТЫ ОБЩЕГО ГОЛОСОВАНИЯ</div><h2>ЛИДЕРЫ <em>СЕЗОНА</em></h2><label class="award-select-label" for="resultsAwardSelect">РЕЗУЛЬТАТЫ НАГРАДЫ</label><select id="resultsAwardSelect" class="award-select"></select><p id="rankingAwardDescription">Общий рейтинг обновляется автоматически. Только реальные отправленные бюллетени.</p></div><div class="rank-stats"><span class="live-dot"></span><span>ВСЕГО ГОЛОСОВ</span><strong id="votesCount">0</strong></div></div>
       <div id="podiumWrap" class="podium-wrap"><div class="waiting-state"><span>✧</span><h3>История ещё пишется</h3><p>Как только появится первый голос, здесь появятся лидеры сезона.</p></div></div>
-      <div class="table-shell"><div class="table-toolbar"><div><b>ОБЩИЙ РЕЙТИНГ</b><small>36 номинантов · сезон 2026</small></div><div class="sort-control" role="group" aria-label="Способ сортировки рейтинга"><button id="sortOfficial" class="active" type="button">ПО ОЧКАМ</button><button id="sortFirst" type="button">ПО ПЕРВЫМ МЕСТАМ</button></div></div><div class="table-scroll"><table><thead><tr><th>№</th><th>ИГРОК</th><th class="numcol">ОЧКИ</th><th class="numcol">1-Е МЕСТА</th><th class="numcol">В ТОП-10</th></tr></thead><tbody id="rankingBody"></tbody></table></div></div>
+      <div class="table-shell"><div class="table-toolbar"><div><b id="rankingAwardName">ОБЩИЙ РЕЙТИНГ</b><small>36 номинантов · сезон 2026</small></div><div class="sort-control" role="group" aria-label="Способ сортировки рейтинга"><button id="sortOfficial" class="active" type="button">ПО ОЧКАМ</button><button id="sortFirst" type="button">ПО ПЕРВЫМ МЕСТАМ</button></div></div><div class="table-scroll"><table><thead><tr><th>№</th><th>ИГРОК</th><th class="numcol">ОЧКИ</th><th class="numcol">1-Е МЕСТА</th><th class="numcol" id="mentionsHeading">В ТОП-10</th></tr></thead><tbody id="rankingBody"></tbody></table></div></div>
     </div></section>
 
-    <section class="rules-section" id="rules"><div class="container"><div class="section-heading rules-heading"><div class="eyebrow"><span class="gold-line"></span> НАСТОЯЩИЙ ПРИНЦИП BALLON D’OR</div><h2>КАК СЧИТАЮТСЯ <em>ОЧКИ</em></h2></div><div class="rules-grid"><div class="rules-main"><span class="rule-number">01</span><h3>Твой топ-10 = один бюллетень</h3><p>Каждый голосующий расставляет десять разных номинантов. Первое место ценится выше всего, но побеждает игрок с наибольшей суммой очков.</p><div class="point-grid" id="pointsGrid"></div></div><div class="rules-side"><div class="rule-card"><span class="rule-number">02</span><h3>Если очков поровну</h3><p>Сначала сравниваем количество первых мест. Если и оно одинаково — вторых, третьих и так до десятого.</p></div><div class="rule-card"><span class="rule-number">03</span><h3>Альтернативный рейтинг</h3><p>Переключатель «По первым местам» показывает, кто чаще становился №1. Он не меняет официального победителя по очкам.</p></div></div></div></div></section>
+    <section class="rules-section" id="rules"><div class="container"><div class="section-heading rules-heading"><div class="eyebrow"><span class="gold-line"></span> ОДИН СЕЗОН — ВОСЕМЬ ПОБЕДИТЕЛЕЙ</div><h2>КАК СЧИТАЮТСЯ <em>ОЧКИ</em></h2></div><div class="rules-grid"><div class="rules-main"><span class="rule-number">01</span><h3 id="rulesAwardTitle">Твой топ-10 = один бюллетень</h3><p id="rulesAwardDescription"></p><div class="point-grid" id="pointsGrid"></div></div><div class="rules-side"><div class="rule-card"><span class="rule-number">02</span><h3>Если очков поровну</h3><p>Сначала сравниваем количество первых мест. Если и оно одинаково — вторых, третьих и далее — до последнего места в бюллетене этой награды.</p></div><div class="rule-card"><span class="rule-number">03</span><h3>Каждая награда — отдельно</h3><p>Один человек может подать по одному бюллетеню в каждой из восьми номинаций. Один и тот же кандидат может участвовать в нескольких наградах. Голоса и очки разных наград не смешиваются. Если организатор включил коды, используй один свой код во всех категориях — по одному разу в каждой.</p></div></div></div></div></section>
     <section class="closing"><div class="container closing-inner"><img src="assets/mark.svg" alt="" width="74" height="74"><span>НЕ СТАДИОН ДЕЛАЕТ ЛЕГЕНДУ</span><h2>ЛЕГЕНДУ ДЕЛАЕТ <em>ПОЛЕ.</em></h2><a href="#vote" class="button button-gold">ОСТАВИТЬ СВОЙ ГОЛОС <span>↗</span></a></div></section>
   </main>
   <footer class="footer"><div class="container footer-inner"><div class="footer-logo"><img src="assets/mark.svg" alt="" width="38" height="38"><span>LESNOE D’OR <small>БЕЛООСТРОВ · 2026</small></span></div><p>Официальная премия нашего поля «Лесной двор». Не связана с организаторами Ballon d’Or.</p><button id="adminOpen" type="button" title="Для организатора">ОРГАНИЗАТОР <span>⚙</span></button></div></footer>
