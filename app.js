@@ -195,27 +195,29 @@ function initAwards(){
  $('awardSelect').addEventListener('change',e=>switchAward(e.target.value));$('resultsAwardSelect').addEventListener('change',e=>switchResults(e.target.value));
  try{$('voterName').value=localStorage.getItem('lesnoe_voter_name')||'';}catch{}
 }
-const momentsState={items:[],index:0,paused:matchMedia('(prefers-reduced-motion: reduce)').matches,sending:false};
+const momentsState={items:[],index:0,sending:false};
 function momentFeedback(message,error=false){$('momentFeedback').textContent=message;$('momentFeedback').className='feedback '+(error?'error':'success');}
 function renderMoment(){
  const {items}=momentsState;momentsState.index=items.length?((momentsState.index%items.length)+items.length)%items.length:0;
  const item=items[momentsState.index];$('momentText').textContent=item?item.text:'Пока нет историй. Вспомни гол, спасение, смешной эпизод или день, который хочется сохранить в истории нашего поля.';
  $('momentCount').textContent=items.length?(momentsState.index+1)+' / '+items.length:'ТВОЯ ИСТОРИЯ МОЖЕТ СТАТЬ ПЕРВОЙ';
- $('momentPrev').disabled=items.length<2;$('momentNext').disabled=items.length<2;$('momentPause').disabled=items.length<2;
- $('momentPause').textContent=momentsState.paused?'ПРОДОЛЖИТЬ ↗':'ПАУЗА Ⅱ';$('momentPause').setAttribute('aria-pressed',String(momentsState.paused));
+ $('momentPrev').disabled=items.length<2;$('momentNext').disabled=items.length<2;
 }
 async function loadMoments(quiet=false){try{const id=momentsState.items[momentsState.index]?.id;const data=await request('moments');momentsState.items=data.moments;const keep=data.moments.findIndex(item=>item.id===id);momentsState.index=keep>=0?keep:0;renderMoment();}catch{if(!quiet)$('momentText').textContent='Истории пока не загрузились. Обнови страницу, чтобы прочитать или добавить момент года.';}}
 function shiftMoment(delta){momentsState.index+=delta;renderMoment();}
 async function submitMoment(event){
- event.preventDefault();if(momentsState.sending)return;const text=$('momentInput').value.trim();if(text.length<15||text.length>1200){momentFeedback('Опиши момент: от 15 до 1200 символов.',true);return;}
+ event.preventDefault();if(momentsState.sending)return;const text=$('momentInput').value.trim();if(text.length<5||text.length>1200){momentFeedback('Опиши момент: от 5 до 1200 символов.',true);return;}
  momentsState.sending=true;$('momentSubmit').disabled=true;momentFeedback('Публикуем историю…');
- try{const data=await request('moments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});momentsState.items=[data.moment,...momentsState.items.filter(m=>m.id!==data.moment.id)];momentsState.index=0;momentsState.paused=true;renderMoment();$('momentForm').reset();$('momentLength').textContent='0 / 1200';momentFeedback('Твой момент опубликован анонимно. Он уже виден всем.');}
+ try{const data=await request('moments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});momentsState.items=[data.moment,...momentsState.items.filter(m=>m.id!==data.moment.id)];momentsState.index=0;renderMoment();$('momentForm').reset();$('momentLength').textContent='0 / 1200';$('momentDialog').close();toast('Твой момент опубликован анонимно. Он уже виден всем.');}
  catch(e){momentFeedback(e.message,true);}finally{momentsState.sending=false;$('momentSubmit').disabled=false;}
 }
 function initMoments(){
  $('momentForm').addEventListener('submit',submitMoment);$('momentInput').addEventListener('input',()=>$('momentLength').textContent=$('momentInput').value.length+' / 1200');
- $('momentPrev').addEventListener('click',()=>{momentsState.paused=true;shiftMoment(-1);});$('momentNext').addEventListener('click',()=>{momentsState.paused=true;shiftMoment(1);});$('momentPause').addEventListener('click',()=>{momentsState.paused=!momentsState.paused;renderMoment();});
- setInterval(()=>{const banner=$('momentBanner');if(!momentsState.paused&&!document.hidden&&!banner.matches(':hover')&&!banner.contains(document.activeElement)&&momentsState.items.length>1)shiftMoment(1);},12000);
+ $('momentPrev').addEventListener('click',()=>shiftMoment(-1));$('momentNext').addEventListener('click',()=>shiftMoment(1));
+ $('momentOpen').addEventListener('click',()=>{momentFeedback('');$('momentDialog').showModal();$('momentInput').focus();});
+ $('momentClose').addEventListener('click',()=>$('momentDialog').close());
+ $('momentDialog').addEventListener('click',e=>{if(e.target===$('momentDialog'))$('momentDialog').close();});
+ setInterval(()=>{if(!document.hidden&&momentsState.items.length>1)shiftMoment(1);},20000);
  renderMoment();
 }
 function bind(){
