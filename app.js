@@ -19,7 +19,7 @@ const $ = (id) => document.getElementById(id);
 const state = {
  nominees:FALLBACK_NOMINEES, selected:[], results:[], votes:0,
  myVote:null, votingOpen:true, requireCodes:false, demo:false, rankingMode:'official',
- adminKey:'', heroUrl:null, step:'select', award:'main', loading:true, submitting:false, connectionError:false
+ adminKey:'', heroUrl:null, step:'select', award:'main', loading:true, submitting:false, connectionError:false, resultsAward:'main', resultsLoading:true
 };
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function initials(name){return name.trim().replace(/\(.*\)/g,'').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();}
@@ -32,7 +32,8 @@ function draftLoad(){try{const value=JSON.parse(localStorage.getItem(draftKey())
 function allDemoBallots(){try{const v=JSON.parse(localStorage.getItem('lesnoe_2026_ballots')||'[]');return Array.isArray(v)?v:[];}catch{return [];}}
 function demoBallots(){return allDemoBallots().filter(b=>(b.award||'main')===state.award);}
 function leaderboard(ballots){const rows=state.nominees.map(n=>({...n,points:0,firstPlaces:0,mentions:0,positions:new Array(limit()).fill(0)}));const byId=Object.fromEntries(rows.map(v=>[v.id,v]));for(const ballot of ballots){if(!Array.isArray(ballot.picks))continue;ballot.picks.forEach((id,i)=>{const p=byId[id];if(p&&i<limit()){p.points+=POINTS[i];p.positions[i]+=1;p.mentions+=1;if(i===0)p.firstPlaces+=1;}});}return rows;}
-function compareOfficial(a,b){if(b.points!==a.points)return b.points-a.points;for(let i=0;i<limit();i++){if(b.positions[i]!==a.positions[i])return b.positions[i]-a.positions[i];}return a.name.localeCompare(b.name,'ru');}
+const resultAward=()=>AWARDS.find(a=>a.id===state.resultsAward);
+function compareOfficial(a,b){if(b.points!==a.points)return b.points-a.points;for(let i=0;i<resultAward().points.length;i++){if(b.positions[i]!==a.positions[i])return b.positions[i]-a.positions[i];}return a.name.localeCompare(b.name,'ru');}
 function compareFirst(a,b){return (b.firstPlaces-a.firstPlaces)||compareOfficial(a,b);}
 function rankData(){const rows=state.results.map(x=>({...x}));rows.sort(state.rankingMode==='official'?compareOfficial:compareFirst);return rows;}
 function refreshAll(){renderAwardDetails();renderNominees();renderVoteCandidates();renderBallot();renderResults();}
@@ -77,7 +78,7 @@ function renderBallot(){
  $('selectionCount').textContent='ВЫБРАНО '+count+' / '+limit();
  $('selectionHint').textContent=state.loading?'Загружаем награду…':count===limit()?'Топ-'+limit()+' собран. Теперь расставь игроков по местам.':'Выбрано '+count+' из '+limit()+'. Осталось выбрать: '+(limit()-count)+'.';
  $('continueBallot').disabled=count!==limit()||!state.votingOpen||state.loading;
- $('backToSelection').classList.toggle('hidden',!!state.myVote);
+ $('backToSelection').classList.toggle('hidden',!!state.myVote);$('viewBallotResults').classList.toggle('hidden',!state.myVote);
  $('selectedPlayers').innerHTML=selected.map((id,i)=>`<button type="button" data-unpick="${i}" class="selected-player" ${state.myVote||!state.votingOpen?'disabled':''} aria-label="Убрать из топ-${limit()}: ${esc(findNominee(id).name)}">${esc(findNominee(id).name)} <span aria-hidden="true">×</span></button>`).join('');
  $('ballotProgress').style.width=(count/limit()*100)+'%';
  $('ballotList').innerHTML=POINTS.map((p,i)=>{
@@ -97,9 +98,11 @@ function renderBallot(){
 }
 function plural(n,forms){return forms[n%10===1&&n%100!==11?0:n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?1:2];}
 function renderResults(){
+ renderResultDetails();
  const ranked=rankData(), votes=state.votes;$('votesCount').textContent=votes;
  $('sortOfficial').classList.toggle('active',state.rankingMode==='official');$('sortFirst').classList.toggle('active',state.rankingMode==='first');
  $('rankingBody').innerHTML=ranked.map((n,i)=>`<tr><td><span class="rank-number">${n.points?String(i+1).padStart(2,'0'):'—'}</span></td><td><div class="rank-player"><span class="rank-avatar">${esc(initials(n.name))}</span><span>${esc(n.name)}</span></div></td><td class="numcol points-cell">${n.points}</td><td class="numcol">${n.firstPlaces}</td><td class="numcol">${n.mentions}</td></tr>`).join('');
+ if(state.resultsLoading){$('podiumWrap').innerHTML='<div class="waiting-state"><span>✧</span><h3>Загружаем результаты…</h3></div>';return;}
  if(!votes){$('podiumWrap').innerHTML='<div class="waiting-state"><span>✧</span><h3>История ещё пишется</h3><p>Как только появится первый голос, здесь появятся лидеры сезона.</p></div>';return;}
  const top=ranked.slice(0,3);$('podiumWrap').innerHTML='<div class="podium">'+top.map((n,i)=>`<div class="podium-card place-${i+1}"><span class="podium-medal">${i===0?'✦ ЗОЛОТО':'✧ '+(i===1?'СЕРЕБРО':'БРОНЗА')} / 0${i+1}</span><div class="podium-icon">${esc(initials(n.name))}</div><h3>${esc(n.name)}</h3><strong>${n.points}</strong><small>ОЧКОВ · ${n.firstPlaces} ПЕРВЫХ МЕСТ</small></div>`).join('')+'</div>';
 }
@@ -113,7 +116,7 @@ async function request(path,opts={}){
  let data;try{data=await response.json();}catch{data={error:'Не удалось прочитать ответ сервера.'};}
  if(!response.ok)throw new Error(data.error||`Ошибка ${response.status}`);return data;
 }
-function initDemo(){state.demo=true;$('demoBanner').classList.remove('hidden');const records=demoBallots();const own=records.find(v=>v.session===getDemoSession());state.myVote=own?own.picks:null;state.votes=records.length;state.results=leaderboard(records);}
+function initDemo(){state.demo=true;$('demoBanner').classList.remove('hidden');const records=demoBallots();const own=records.find(v=>v.session===getDemoSession());state.myVote=own?own.picks:null;}
 function getDemoSession(){let key;try{key=localStorage.getItem('lesnoe_2026_session');if(!key){key='demo-'+Math.random().toString(36).slice(2)+Date.now();localStorage.setItem('lesnoe_2026_session',key);}}catch{key='no-storage';}return key;}
 let loadSequence=0;
 async function load(){
@@ -121,28 +124,35 @@ async function load(){
  state.loading=true;state.connectionError=false;state.votingOpen=false;
  if(location.protocol==='file:'){initDemo();state.votingOpen=true;state.loading=false;return;}
  try{
-  const [info,results]=await Promise.all([request('state?award='+encodeURIComponent(award)),request('results?award='+encodeURIComponent(award))]);
+  const info=await request('state?award='+encodeURIComponent(award));
   if(sequence!==loadSequence)return false;
   if(Array.isArray(info.nominees)&&info.nominees.length)state.nominees=info.nominees;
   state.myVote=info.myVote?.picks||null;state.votingOpen=!!info.votingOpen;state.requireCodes=!!info.requireCodes;
-  state.votes=results.votes;state.results=results.standings;applyHero(info.heroUrl);
+  applyHero(info.heroUrl);
  }catch(err){if(sequence!==loadSequence)return false;console.error('Backend unavailable',err);state.connectionError=true;state.votingOpen=false;toast('Нет соединения с сервером. Обнови страницу перед голосованием.');}
  finally{if(sequence===loadSequence)state.loading=false;}
  return sequence===loadSequence;
 }
 async function switchAward(id,scroll=false){
- if(state.submitting){toast('Подожди, бюллетень отправляется.');$('awardSelect').value=state.award;$('resultsAwardSelect').value=state.award;return;}
+ if(state.submitting){toast('Подожди, бюллетень отправляется.');$('awardSelect').value=state.award;return;}
  if(!AWARDS.some(a=>a.id===id))return;
  if(id===state.award){if(scroll)$('vote').scrollIntoView({behavior:'smooth'});return;}
  if(!state.myVote)draftSave();
  const name=$('voterName').value;try{if(name)localStorage.setItem('lesnoe_voter_name',name);}catch{}
- state.award=id;POINTS=activeAward().points;state.selected=[];state.myVote=null;state.results=[];state.votes=0;state.step='select';state.loading=true;
+ state.award=id;POINTS=activeAward().points;state.selected=[];state.myVote=null;state.step='select';state.loading=true;
  $('nomineeSearch').value='';$('voteSearch').value='';refreshAll();renderPoints();
  if(scroll)$('vote').scrollIntoView({behavior:'smooth'});
  const current=await load();if(current===false||state.award!==id)return;
  if(state.myVote)state.selected=[...state.myVote];else draftLoad();refreshAll();
 }
-async function updateResults(){if(state.demo||state.loading)return;const award=state.award;try{const d=await request('results?award='+encodeURIComponent(award));if(award!==state.award)return;state.votes=d.votes;state.results=d.standings;renderResults();}catch{}}
+let resultsSequence=0;
+async function updateResults(){
+ const award=state.resultsAward,sequence=++resultsSequence;
+ if(state.demo){const records=allDemoBallots().filter(b=>(b.award||'main')===award);const oldPoints=POINTS;POINTS=resultAward().points;state.results=leaderboard(records);POINTS=oldPoints;state.votes=records.length;state.resultsLoading=false;renderResults();return;}
+ try{const data=await request('results?award='+encodeURIComponent(award));if(sequence!==resultsSequence||award!==state.resultsAward)return;state.votes=data.votes;state.results=data.standings;state.resultsLoading=false;renderResults();}
+ catch{if(sequence!==resultsSequence)return;state.resultsLoading=false;$('podiumWrap').innerHTML='<div class="waiting-state"><h3>Не удалось загрузить результаты</h3><p>Обнови страницу или выбери награду ещё раз.</p></div>';}
+}
+async function switchResults(id){if(!AWARDS.some(a=>a.id===id))return;state.resultsAward=id;state.results=[];state.votes=0;state.resultsLoading=true;state.rankingMode='official';renderResults();await updateResults();}
 async function submitVote(){
  if(state.myVote||state.submitting||state.loading||!state.votingOpen)return;
  if(state.selected.length!==limit()){toast('Для этой награды выбери ровно '+limit()+' разных номинантов.');return;}
@@ -152,9 +162,9 @@ async function submitVote(){
  state.submitting=true;$('submitVote').disabled=true;feedback('Отправляем бюллетень…');
  try{
   const payload={award:state.award,name,picks:[...state.selected],code};
-  if(state.demo){const records=demoBallots();if(records.some(r=>r.name.toLowerCase()===name.toLowerCase()))throw new Error('Это имя уже участвовало в голосовании.');if(records.some(r=>r.session===getDemoSession()))throw new Error('На этом устройстве уже голосовали.');records.push({...payload,session:getDemoSession()});localStorage.setItem('lesnoe_2026_ballots',JSON.stringify([...allDemoBallots().filter(b=>(b.award||'main')!==state.award),...records]));state.myVote=[...state.selected];state.votes=records.length;state.results=leaderboard(records);
+  if(state.demo){const records=demoBallots();if(records.some(r=>r.name.toLowerCase()===name.toLowerCase()))throw new Error('Это имя уже участвовало в голосовании.');if(records.some(r=>r.session===getDemoSession()))throw new Error('На этом устройстве уже голосовали.');records.push({...payload,session:getDemoSession()});localStorage.setItem('lesnoe_2026_ballots',JSON.stringify([...allDemoBallots().filter(b=>(b.award||'main')!==state.award),...records]));state.myVote=[...state.selected];await updateResults();
   }else{await request('vote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});state.myVote=[...state.selected];await updateResults();}
-  state.submitting=false;toast('Голос за «'+activeAward().shortName+'» принят. Спасибо!');refreshAll();setTimeout(()=>$('ranking').scrollIntoView({behavior:'smooth'}),700);
+  state.submitting=false;toast('Голос за «'+activeAward().shortName+'» принят. Спасибо!');refreshAll();if(state.award==='main')setTimeout(()=>$('ranking').scrollIntoView({behavior:'smooth'}),700);
  }catch(e){feedback(e.message,'error');$('submitVote').disabled=false;}finally{state.submitting=false;}
 }
 function adminMessage(message,type=''){const el=$('adminFeedback');el.className='feedback '+type;el.textContent=message;}
@@ -166,25 +176,47 @@ async function adminGenerate(){const n=Math.max(1,Math.min(100,Number($('codesAm
 async function adminExport(){if(state.demo){adminMessage('Экспорт доступен после запуска сервера.','error');return;}try{const r=await apiFetch('admin/export',{headers:{'X-Admin-Key':state.adminKey}});if(!r.ok)throw new Error('Ошибка экспорта: '+r.status);const blob=await r.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='lesnoe-ballondor-2026-votes.csv';a.click();URL.revokeObjectURL(url);adminMessage('CSV загружен.','success');}catch(e){adminMessage(e.message,'error');}}
 function renderAwardDetails(){
  const a=activeAward(),n=limit();
- $('awardSelect').value=a.id;$('resultsAwardSelect').value=a.id;
+ $('awardSelect').value=a.id;
  $('activeAwardName').textContent=a.name;$('activeAwardDescription').textContent=a.description;$('activeAwardGuidance').textContent=a.guidance;
  $('awardScoring').textContent=n===3?'Три разных номинанта · 1-е место — 3 очка · 2-е — 2 · 3-е — 1':'Десять разных игроков · Очки за места: '+POINTS.join(', ');
  $('voteTitle').innerHTML='СОСТАВЬ СВОЙ <em>ТОП-'+n+'</em>';
  $('selectionInstruction').textContent='Сначала выбери '+n+' разных номинантов — пока в любом порядке. Затем расставь их по местам в бюллетене.';
  $('rankingInstruction').textContent='Введи место от 1 до '+n+' рядом с игроком и нажми Enter или выйди из поля. Игрок переместится на это место, остальные сдвинутся. Первое место — '+POINTS[0]+(n===3?' очка.':' очков.');
  $('ballotLimit').textContent=n;$('backToSelection').textContent='← ИЗМЕНИТЬ СОСТАВ ТОП-'+n;
- $('rankingAwardName').textContent=a.name;$('mentionsHeading').textContent='В ТОП-'+n;
- $('rankingAwardDescription').textContent='Отдельный рейтинг: '+a.name+'. Обновляется автоматически каждые 30 секунд. Очки из других наград сюда не входят.';
  $('rulesAwardTitle').textContent='Твой топ-'+n+' = один бюллетень';
  $('rulesAwardDescription').textContent=a.guidance+' Очки за места: '+POINTS.join(', ')+'. Побеждает кандидат с наибольшей суммой очков в этой награде.';
  document.querySelectorAll('[data-award]').forEach(button=>{button.classList.toggle('active',button.dataset.award===a.id);button.setAttribute('aria-pressed',String(button.dataset.award===a.id));});
 }
+function renderResultDetails(){const a=resultAward();$('resultsAwardSelect').value=a.id;$('rankingAwardName').textContent=a.name;$('mentionsHeading').textContent='В ТОП-'+a.points.length;$('rankingAwardDescription').textContent=a.id==='main'?'По умолчанию здесь результаты Золотого мяча — лучшего игрока Лесного в целом. Другие награды можно открыть в списке выше.':'Результаты награды «'+a.name+'». Очки из других категорий сюда не входят.';}
 function initAwards(){
  const options=AWARDS.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('');$('awardSelect').innerHTML=options;$('resultsAwardSelect').innerHTML=options;
  $('awardsGrid').innerHTML=AWARDS.map((a,i)=>`<article class="award-card ${i===0?'award-card-main':''}"><div class="award-card-top"><span class="award-icon" aria-hidden="true">${a.icon}</span><span class="mini-tag">${i===0?'ГЛАВНАЯ НАГРАДА':'ТОП-3 · 3 / 2 / 1'}</span></div><h3>${esc(a.name)}</h3><p>${esc(a.description)}</p><details><summary>Как голосовать</summary><p>${esc(a.guidance)}</p><p>${i===0?'Очки за места: '+a.points.join(', '):'1-е место — 3 очка, 2-е — 2, 3-е — 1. Выбери ровно трёх разных номинантов.'}</p></details><button type="button" class="award-vote-button" data-award="${a.id}" aria-pressed="false">ВЫБРАТЬ ${i===0?'ТОП-10':'ТОП-3'} <span aria-hidden="true">↗</span><span class="sr-only"> — ${esc(a.name)}</span></button></article>`).join('');
  $('awardsGrid').addEventListener('click',e=>{const button=e.target.closest('[data-award]');if(button)switchAward(button.dataset.award,true);});
- $('awardSelect').addEventListener('change',e=>switchAward(e.target.value));$('resultsAwardSelect').addEventListener('change',e=>switchAward(e.target.value));
+ $('awardSelect').addEventListener('change',e=>switchAward(e.target.value));$('resultsAwardSelect').addEventListener('change',e=>switchResults(e.target.value));
  try{$('voterName').value=localStorage.getItem('lesnoe_voter_name')||'';}catch{}
+}
+const momentsState={items:[],index:0,paused:matchMedia('(prefers-reduced-motion: reduce)').matches,sending:false};
+function momentFeedback(message,error=false){$('momentFeedback').textContent=message;$('momentFeedback').className='feedback '+(error?'error':'success');}
+function renderMoment(){
+ const {items}=momentsState;momentsState.index=items.length?((momentsState.index%items.length)+items.length)%items.length:0;
+ const item=items[momentsState.index];$('momentText').textContent=item?item.text:'Пока нет историй. Вспомни гол, спасение, смешной эпизод или день, который хочется сохранить в истории нашего поля.';
+ $('momentCount').textContent=items.length?(momentsState.index+1)+' / '+items.length:'ТВОЯ ИСТОРИЯ МОЖЕТ СТАТЬ ПЕРВОЙ';
+ $('momentPrev').disabled=items.length<2;$('momentNext').disabled=items.length<2;$('momentPause').disabled=items.length<2;
+ $('momentPause').textContent=momentsState.paused?'ПРОДОЛЖИТЬ ↗':'ПАУЗА Ⅱ';$('momentPause').setAttribute('aria-pressed',String(momentsState.paused));
+}
+async function loadMoments(quiet=false){try{const id=momentsState.items[momentsState.index]?.id;const data=await request('moments');momentsState.items=data.moments;const keep=data.moments.findIndex(item=>item.id===id);momentsState.index=keep>=0?keep:0;renderMoment();}catch{if(!quiet)$('momentText').textContent='Истории пока не загрузились. Обнови страницу, чтобы прочитать или добавить момент года.';}}
+function shiftMoment(delta){momentsState.index+=delta;renderMoment();}
+async function submitMoment(event){
+ event.preventDefault();if(momentsState.sending)return;const text=$('momentInput').value.trim();if(text.length<15||text.length>1200){momentFeedback('Опиши момент: от 15 до 1200 символов.',true);return;}
+ momentsState.sending=true;$('momentSubmit').disabled=true;momentFeedback('Публикуем историю…');
+ try{const data=await request('moments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});momentsState.items=[data.moment,...momentsState.items.filter(m=>m.id!==data.moment.id)];momentsState.index=0;momentsState.paused=true;renderMoment();$('momentForm').reset();$('momentLength').textContent='0 / 1200';momentFeedback('Твой момент опубликован анонимно. Он уже виден всем.');}
+ catch(e){momentFeedback(e.message,true);}finally{momentsState.sending=false;$('momentSubmit').disabled=false;}
+}
+function initMoments(){
+ $('momentForm').addEventListener('submit',submitMoment);$('momentInput').addEventListener('input',()=>$('momentLength').textContent=$('momentInput').value.length+' / 1200');
+ $('momentPrev').addEventListener('click',()=>{momentsState.paused=true;shiftMoment(-1);});$('momentNext').addEventListener('click',()=>{momentsState.paused=true;shiftMoment(1);});$('momentPause').addEventListener('click',()=>{momentsState.paused=!momentsState.paused;renderMoment();});
+ setInterval(()=>{const banner=$('momentBanner');if(!momentsState.paused&&!document.hidden&&!banner.matches(':hover')&&!banner.contains(document.activeElement)&&momentsState.items.length>1)shiftMoment(1);},12000);
+ renderMoment();
 }
 function bind(){
  $('nomineesGrid').addEventListener('click',e=>{const b=e.target.closest('[data-pick]');if(b){pick(b.dataset.pick);$('vote').scrollIntoView({behavior:'smooth',block:'start'});}});
@@ -196,6 +228,7 @@ function bind(){
  $('ballotList').addEventListener('focusout',e=>{if(e.target.matches('[data-place]'))setPlace(e.target.dataset.place,e.target.value);});
  $('ballotList').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-place]')){e.preventDefault();setPlace(e.target.dataset.place,e.target.value);}});
  $('submitVote').addEventListener('click',submitVote);
+ $('viewBallotResults').addEventListener('click',()=>{switchResults(state.award);$('ranking').scrollIntoView({behavior:'smooth'});});
  $('sortOfficial').addEventListener('click',()=>{state.rankingMode='official';renderResults();});
  $('sortFirst').addEventListener('click',()=>{state.rankingMode='first';renderResults();});
  $('menuBtn').addEventListener('click',()=>{const open=$('mobileLinks').classList.toggle('open');$('menuBtn').setAttribute('aria-expanded',String(open));});
@@ -205,6 +238,6 @@ function bind(){
  $('adminAuth').addEventListener('click',adminAuth);$('adminSave').addEventListener('click',adminSave);$('adminUpload').addEventListener('click',adminUpload);$('adminGenerate').addEventListener('click',adminGenerate);$('adminExport').addEventListener('click',adminExport);
  $('adminCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('generatedCodes').value);adminMessage('Коды скопированы.','success');}catch{adminMessage('Не получилось скопировать. Выдели текст вручную.','error');}});
 }
-async function start(){initAwards();bind();renderAwardDetails();renderPoints();await load();if(state.myVote)state.selected=[...state.myVote];else draftLoad();refreshAll();setInterval(()=>{if(!document.hidden)updateResults();},30000);}
+async function start(){initAwards();initMoments();bind();renderAwardDetails();renderPoints();renderResults();await Promise.all([load(),updateResults(),loadMoments()]);if(state.myVote)state.selected=[...state.myVote];else draftLoad();refreshAll();setInterval(()=>{if(!document.hidden){updateResults();loadMoments(true);}},30000);}
 start();
 })();

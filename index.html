@@ -10,9 +10,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=awards-2026">
-  <script src="awards.js?v=awards-2026" defer></script>
-  <script src="app.js?v=awards-2026" defer></script>
+  <link rel="stylesheet" href="styles.css?v=moments-2026">
+  <script src="awards.js?v=moments-2026" defer></script>
+  <script src="app.js?v=moments-2026" defer></script>
 </head>
 <body>
   <div class="announcement"><span class="ann-diamond">✦</span> ОФИЦИАЛЬНАЯ ПРЕМИЯ НАШЕГО ПОЛЯ — ЛЕСНОЙ ДВОР <span class="ann-divider"></span> СЕЗОН 2026 <span class="ann-diamond">✦</span></div>
@@ -22,11 +22,11 @@
         <img src="assets/mark.svg" alt="" width="46" height="46">
         <span class="brand-copy"><b>LESNOE <i>D’OR</i></b><small>БЕЛООСТРОВ · 2026</small></span>
       </a>
-      <nav class="nav" aria-label="Главное меню"><a href="#awards">Награды</a><a href="#nominees">Номинанты</a><a href="#vote">Голосование</a><a href="#ranking">Рейтинг</a><a href="#rules">Правила</a></nav>
+      <nav class="nav" aria-label="Главное меню"><a href="#moments">Моменты</a><a href="#awards">Награды</a><a href="#nominees">Номинанты</a><a href="#vote">Голосование</a><a href="#ranking">Рейтинг</a><a href="#rules">Правила</a></nav>
       <a class="nav-button" href="#vote">ГОЛОСОВАТЬ <span aria-hidden="true">↗</span></a>
       <button class="mobile-menu" id="menuBtn" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
-    <div class="mobile-links" id="mobileLinks"><a href="#awards">Награды</a><a href="#nominees">Номинанты</a><a href="#vote">Голосовать</a><a href="#ranking">Рейтинг</a><a href="#rules">Правила</a></div>
+    <div class="mobile-links" id="mobileLinks"><a href="#moments">Моменты</a><a href="#awards">Награды</a><a href="#nominees">Номинанты</a><a href="#vote">Голосовать</a><a href="#ranking">Рейтинг</a><a href="#rules">Правила</a></div>
   </header>
 
   <main>
@@ -50,6 +50,12 @@
 
     <div class="ticker" aria-hidden="true"><div class="ticker-inner">LESNOE D’OR <span>✦</span> THE FIELD. THE PEOPLE. THE LEGENDS. <span>✦</span> ЗОЛОТОЙ МЯЧ 2026 <span>✦</span> LESNOE D’OR <span>✦</span> THE FIELD. THE PEOPLE. THE LEGENDS. <span>✦</span> ЗОЛОТОЙ МЯЧ 2026 <span>✦</span></div></div>
 
+    <section class="sponsor-section" aria-label="Спонсор премии"><div class="container sponsor-inner"><a class="sponsor-brand" href="https://corporate.baltika.ru/products/catalog/rizhskoe/rizhskoe-firmennoe/" target="_blank" rel="noopener noreferrer" aria-label="Рижское Фирменное — сайт производителя"><span class="sponsor-crest"><img src="assets/rizhskoe-official.png" alt="Фирменный знак «Рижское Фирменное» с официальной этикетки" width="154" height="570"></span><span class="sponsor-wordmark">Рижское<small>ФИРМЕННОЕ</small></span></a><div class="sponsor-caption"><span class="panel-kicker">SPONSORED BY · СПОНСОР ПРЕМИИ</span><p>Пиво «Рижское Фирменное»</p><span>«Балтика» · 18+</span></div></div></section>
+    <section class="moments-section" id="moments"><div class="container">
+      <div class="section-heading"><div class="eyebrow"><span class="gold-line"></span> НАШИ ИСТОРИИ · АНОНИМНО</div><h2>МОМЕНТ <em>ГОДА</em></h2><p>Гол с центра поля, невероятный сейв, шутка после матча — у каждого свой момент сезона. Поделись им без имени. Истории сохраняются и доступны всем.</p></div>
+      <div class="moments-layout"><div id="momentBanner" class="moment-banner" role="region" aria-roledescription="карусель" aria-label="Моменты года" tabindex="0"><span class="moment-quote" aria-hidden="true">“</span><span class="panel-kicker">АНОНИМНАЯ ИСТОРИЯ С ЛЕСНОГО ПОЛЯ</span><p id="momentText" class="moment-text"></p><div class="moment-toolbar"><span id="momentCount"></span><div class="moment-controls"><button id="momentPrev" type="button" aria-label="Предыдущий момент">←</button><button id="momentPause" type="button" aria-pressed="false">ПАУЗА Ⅱ</button><button id="momentNext" type="button" aria-label="Следующий момент">→</button></div></div></div>
+      <form id="momentForm" class="moment-form"><span class="panel-kicker">ДОБАВЬ СВОЙ ЭПИЗОД</span><h3>Это надо запомнить.</h3><label for="momentInput">ТВОЙ МОМЕНТ ГОДА</label><textarea id="momentInput" minlength="15" maxlength="1200" rows="6" required placeholder="Например: тот самый матч под дождём, когда…"></textarea><div class="moment-form-meta"><span>Без имени и подписи. После отправки текст сразу появится на сайте.</span><span id="momentLength">0 / 1200</span></div><button id="momentSubmit" class="button button-gold" type="submit">ОПУБЛИКОВАТЬ АНОНИМНО <span>↗</span></button><p id="momentFeedback" class="feedback" role="status" aria-live="polite"></p></form></div>
+    </div></section>
     <section class="awards-section" id="awards"><div class="container">
       <div class="section-heading"><div class="eyebrow"><span class="gold-line"></span> ГЕРОИ НАШЕГО ПОЛЯ</div><h2>ВОСЕМЬ <em>НАГРАД</em></h2><p>В каждой награде — отдельный бюллетень и свой рейтинг. За лучшего игрока Лесного в целом выбери топ-10. В остальных семи премиях — топ-3. Можно голосовать во всех категориях, в любом порядке.</p></div>
       <div id="awardsGrid" class="awards-grid"></div>
@@ -77,14 +83,14 @@
             <div class="ballot-progress"><span id="ballotProgress"></span></div>
             <p class="ballot-instruction" id="rankingInstruction"></p>
             <button id="backToSelection" class="back-to-selection" type="button">← ИЗМЕНИТЬ СОСТАВ ТОП-10</button><div id="ballotList" class="ballot-list" aria-live="polite"></div>
-            <div class="voter-form" id="voterForm"><label for="voterName">КАК ТЕБЯ ЗОВУТ? <span>— имя увидит только организатор</span></label><input id="voterName" type="text" maxlength="48" autocomplete="name" placeholder="Например, Сергей" required><div id="inviteCodeWrap" class="hidden"><label for="inviteCode">КОД ГОЛОСОВАНИЯ</label><input id="inviteCode" type="text" placeholder="LES-XXXX-XXXX" autocomplete="off" maxlength="32"></div><button id="submitVote" type="button" class="button button-gold submit-button" disabled>ОТПРАВИТЬ ГОЛОС <span>↗</span></button><p class="voter-footnote">Голос в этой награде окончательный. В других номинациях можно проголосовать отдельно.</p><div id="voteFeedback" class="feedback" role="status" aria-live="polite"></div></div>
+            <div class="voter-form" id="voterForm"><label for="voterName">КАК ТЕБЯ ЗОВУТ? <span>— имя увидит только организатор</span></label><input id="voterName" type="text" maxlength="48" autocomplete="name" placeholder="Например, Сергей" required><div id="inviteCodeWrap" class="hidden"><label for="inviteCode">КОД ГОЛОСОВАНИЯ</label><input id="inviteCode" type="text" placeholder="LES-XXXX-XXXX" autocomplete="off" maxlength="32"></div><button id="submitVote" type="button" class="button button-gold submit-button" disabled>ОТПРАВИТЬ ГОЛОС <span>↗</span></button><p class="voter-footnote">Голос в этой награде окончательный. В других номинациях можно проголосовать отдельно.</p><div id="voteFeedback" class="feedback" role="status" aria-live="polite"></div><button type="button" id="viewBallotResults" class="back-to-selection hidden">ПОСМОТРЕТЬ РЕЗУЛЬТАТЫ ЭТОЙ НАГРАДЫ ↗</button></div>
           </div>
         </div>
       </div>
     </section>
 
     <section class="ranking-section" id="ranking"><div class="container">
-      <div class="section-heading ranking-head"><div><div class="eyebrow subdued"><span class="gold-line"></span> РЕЗУЛЬТАТЫ ОБЩЕГО ГОЛОСОВАНИЯ</div><h2>ЛИДЕРЫ <em>СЕЗОНА</em></h2><label class="award-select-label" for="resultsAwardSelect">РЕЗУЛЬТАТЫ НАГРАДЫ</label><select id="resultsAwardSelect" class="award-select"></select><p id="rankingAwardDescription">Общий рейтинг обновляется автоматически. Только реальные отправленные бюллетени.</p></div><div class="rank-stats"><span class="live-dot"></span><span>ВСЕГО ГОЛОСОВ</span><strong id="votesCount">0</strong></div></div>
+      <div class="section-heading ranking-head"><div><div class="eyebrow subdued"><span class="gold-line"></span> РЕЗУЛЬТАТЫ ОБЩЕГО ГОЛОСОВАНИЯ</div><h2>ЛИДЕРЫ <em>СЕЗОНА</em></h2><label class="award-select-label" for="resultsAwardSelect">ЗОЛОТОЙ МЯЧ И ДРУГИЕ НАГРАДЫ</label><select id="resultsAwardSelect" class="award-select"></select><p id="rankingAwardDescription">Общий рейтинг обновляется автоматически. Только реальные отправленные бюллетени.</p></div><div class="rank-stats"><span class="live-dot"></span><span>ВСЕГО ГОЛОСОВ</span><strong id="votesCount">0</strong></div></div>
       <div id="podiumWrap" class="podium-wrap"><div class="waiting-state"><span>✧</span><h3>История ещё пишется</h3><p>Как только появится первый голос, здесь появятся лидеры сезона.</p></div></div>
       <div class="table-shell"><div class="table-toolbar"><div><b id="rankingAwardName">ОБЩИЙ РЕЙТИНГ</b><small>36 номинантов · сезон 2026</small></div><div class="sort-control" role="group" aria-label="Способ сортировки рейтинга"><button id="sortOfficial" class="active" type="button">ПО ОЧКАМ</button><button id="sortFirst" type="button">ПО ПЕРВЫМ МЕСТАМ</button></div></div><div class="table-scroll"><table><thead><tr><th>№</th><th>ИГРОК</th><th class="numcol">ОЧКИ</th><th class="numcol">1-Е МЕСТА</th><th class="numcol" id="mentionsHeading">В ТОП-10</th></tr></thead><tbody id="rankingBody"></tbody></table></div></div>
     </div></section>
