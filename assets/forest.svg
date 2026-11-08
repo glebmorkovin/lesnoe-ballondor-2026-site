@@ -1,0 +1,21 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#0c211a"/><stop offset=".51" stop-color="#193b29"/><stop offset="1" stop-color="#17311e"/></linearGradient>
+  <radialGradient id="glow" cx="65%" cy="36%" r="62%"><stop stop-color="#d9b25d" stop-opacity=".24"/><stop offset="1" stop-color="#112c20" stop-opacity="0"/></radialGradient>
+  <linearGradient id="grass" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#1f4b2e"/><stop offset="1" stop-color="#07180f"/></linearGradient>
+  <pattern id="grain" width="75" height="75" patternUnits="userSpaceOnUse"><path d="M0 72H75" stroke="#ffffff" stroke-opacity=".022" stroke-width="2"/></pattern>
+  <g id="tree"><path d="M0 10l-25 42h14l-26 40h16l-26 41H-4v43h9v-43h44L22 92h17L10 52h16Z"/></g>
+ </defs>
+ <rect width="1600" height="1000" fill="url(#sky)"/>
+ <rect width="1600" height="1000" fill="url(#glow)"/>
+ <circle cx="1120" cy="300" r="147" fill="#e8b862" opacity=".06"/>
+ <path d="M0 470Q300 387 580 455T1170 440T1600 475V780H0" fill="#12291c" opacity=".8"/>
+ <g fill="#092016" opacity=".8">
+  <use href="#tree" transform="translate(60 310) scale(2.2)"/><use href="#tree" transform="translate(170 370) scale(1.7)"/><use href="#tree" transform="translate(255 285) scale(2.45)"/><use href="#tree" transform="translate(360 355) scale(1.95)"/><use href="#tree" transform="translate(470 280) scale(2.4)"/><use href="#tree" transform="translate(570 345) scale(1.8)"/><use href="#tree" transform="translate(650 290) scale(2.3)"/><use href="#tree" transform="translate(760 340) scale(1.95)"/><use href="#tree" transform="translate(870 310) scale(2.2)"/><use href="#tree" transform="translate(960 385) scale(1.6)"/><use href="#tree" transform="translate(1060 270) scale(2.55)"/><use href="#tree" transform="translate(1170 360) scale(1.9)"/><use href="#tree" transform="translate(1290 295) scale(2.5)"/><use href="#tree" transform="translate(1410 355) scale(2)"/><use href="#tree" transform="translate(1540 295) scale(2.35)"/>
+ </g>
+ <path d="M0 540Q570 500 1600 540V1000H0" fill="url(#grass)"/>
+ <path d="M0 595Q740 548 1600 590V1000H0" fill="#2f643e" opacity=".13"/>
+ <g stroke="#ccdeb1" stroke-width="3" fill="none" opacity=".23"><path d="M490 750H1550L1450 616H770Z"/><path d="M760 750L1035 616"/><path d="M1550 750L1450 616"/><ellipse cx="1080" cy="683" rx="135" ry="43"/></g>
+ <path d="M0 820Q800 735 1600 805" stroke="#c89a48" stroke-opacity=".12" stroke-width="5" fill="none"/>
+ <rect width="1600" height="1000" fill="url(#grain)"/>
+</svg>
